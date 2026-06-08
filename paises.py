@@ -270,7 +270,64 @@ def buscar_pais(paises):
 
 
 def filtrar_paises(paises):
-    pass
+    """Submenú para aplicar distintos filtros a la lista"""
+    if not paises:
+        imprimir_cuadro_advertencia("No hay países para filtrar.")
+        return
+
+    imprimir_titulo("FILTRAR PAÍSES")
+    print("1. Por continente")
+    print("2. Por rango de población")
+    print("3. Por rango de superficie")
+    print("0. Volver")
+
+    opcion = input(f"\n{AMARILLO}Seleccione una opción: {RESET}")
+
+    resultados = []
+    if opcion == "1":
+        continentes = []
+        for p in paises:
+            if p["continente"] not in continentes:
+                continentes.append(p["continente"])
+
+        print(f"\nContinentes disponibles: {', '.join(continentes)}")
+        elegido = input(f"{BLANCO}Escriba el continente: {RESET}").strip().title()
+
+        for p in paises:
+            if p["continente"] == elegido:
+                resultados.append(p)
+
+    elif opcion == "2":
+        try:
+            min_pob = int(input(f"{BLANCO}Población mínima: {RESET}"))
+            max_pob = int(input(f"{BLANCO}Población máxima: {RESET}"))
+            for p in paises:
+                if min_pob <= p["poblacion"] <= max_pob:
+                    resultados.append(p)
+        except ValueError:
+            imprimir_cuadro_error("Debe ingresar números válidos.")
+            return
+
+    elif opcion == "3":
+        try:
+            min_sup = int(input(f"{BLANCO}Superficie mínima: {RESET}"))
+            max_sup = int(input(f"{BLANCO}Superficie máxima: {RESET}"))
+            for p in paises:
+                if min_sup <= p["superficie"] <= max_sup:
+                    resultados.append(p)
+        except ValueError:
+            imprimir_cuadro_error("Debe ingresar números válidos.")
+            return
+    elif opcion == "0":
+        return
+    else:
+        imprimir_cuadro_advertencia("Opción no válida.")
+        return
+
+    if resultados:
+        mostrar_todos(resultados)
+    else:
+        imprimir_cuadro_advertencia("Ningún país coincide con el filtro.")
 
 
 def ordenar_paises(paises):
