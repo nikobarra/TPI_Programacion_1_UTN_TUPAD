@@ -247,7 +247,26 @@ def actualizar_pais(paises):
 
 
 def buscar_pais(paises):
-    pass
+    """Busca países que contengan el texto ingresado"""
+    if not paises:
+        imprimir_cuadro_advertencia("No hay países cargados.")
+        return
+
+    imprimir_titulo("BUSCAR PAÍS")
+    termino = (
+        input(f"{BLANCO}Ingrese parte del nombre a buscar: {RESET}").strip().title()
+    )
+
+    resultados = []
+    for p in paises:
+        if termino in p["nombre"]:
+            resultados.append(p)
+
+    if resultados:
+        imprimir_cuadro_info(f"Se encontraron {len(resultados)} coincidencias:")
+        mostrar_todos(resultados)
+    else:
+        imprimir_cuadro_advertencia("No se encontraron países con ese nombre.")
 
 
 def filtrar_paises(paises):
