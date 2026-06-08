@@ -199,7 +199,51 @@ def agregar_pais(paises):
 
 
 def actualizar_pais(paises):
-    pass
+    """Busca un país por nombre y permite editar población y superficie"""
+    if not paises:
+        imprimir_cuadro_advertencia("La lista está vacía.")
+        return
+
+    imprimir_titulo("ACTUALIZAR DATOS")
+    buscar = (
+        input(f"{BLANCO}Ingrese el nombre exacto del país a actualizar: {RESET}")
+        .strip()
+        .title()
+    )
+
+    encontrado = None
+    for p in paises:
+        if p["nombre"] == buscar:
+            encontrado = p
+            break
+
+    if encontrado:
+        print(f"\n{CIAN}Datos actuales de {encontrado['nombre']}:{RESET}")
+        print(f"- Población: {encontrado['poblacion']:,}")
+        print(f"- Superficie: {encontrado['superficie']:,}")
+
+        try:
+            nueva_pob = int(input(f"\n{BLANCO}Nueva población: {RESET}"))
+            nueva_sup = int(input(f"{BLANCO}Nueva superficie: {RESET}"))
+
+            if nueva_pob > 0 and nueva_sup > 0:
+                encontrado["poblacion"] = nueva_pob
+                encontrado["superficie"] = nueva_sup
+
+                if guardar_csv("paises.csv", paises):
+                    imprimir_cuadro_exito(
+                        "Datos actualizados y guardados correctamente."
+                    )
+                else:
+                    imprimir_cuadro_advertencia(
+                        "Datos actualizados en memoria, pero error al guardar en archivo."
+                    )
+            else:
+                imprimir_cuadro_error("Los valores deben ser mayores a cero.")
+        except ValueError:
+            imprimir_cuadro_error("Ingreso inválido. No se realizaron cambios.")
+    else:
+        imprimir_cuadro_error("País no encontrado.")
 
 
 def buscar_pais(paises):
