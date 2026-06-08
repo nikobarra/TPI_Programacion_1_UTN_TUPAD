@@ -117,8 +117,20 @@ def guardar_csv(nombre_archivo, lista_paises):
         return False
 
 
-def mostrar_todos (paises):
-    pass 
+def mostrar_todos(paises):
+    """Muestra todos los países en una tabla formateada"""
+    if not paises:
+        imprimir_cuadro_advertencia("No hay países para mostrar.")
+        return
+
+    # Encabezado de la tabla
+    header = f"{NEGRITA}{AZUL}{'NOMBRE':<20} {'POBLACIÓN':<15} {'SUPERFICIE (km2)':<20} {'CONTINENTE':<15}{RESET}"
+    print("\n" + header)
+    print("─" * 70)
+
+    for p in paises:
+        print(f"{p['nombre']:<20} {p['poblacion']:<15,} {p['superficie']:<20,} {p['continente']:<15}")
+    print("─" * 70)
 
 def agregar_pais(paises):
     pass 
