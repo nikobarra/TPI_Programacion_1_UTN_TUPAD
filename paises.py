@@ -45,3 +45,25 @@ def imprimir_cuadro_advertencia(mensaje):
     print(f"\n{AMARILLO}╔{linea}╗")
     print(f"║   ⚠  {mensaje}   ║")
     print(f"╚{linea}╝{RESET}")
+
+
+def imprimir_titulo(texto): 
+    """Muestra un título decorado en magenta"""
+    print(f"\n{MAGENTA}{NEGRITA}{'═' * 50}")
+    print(f"{texto.center(50)}")
+    print(f"{'═' * 50}{RESET}")
+
+def imprimir_menu():
+    """Muestra el menú principal con bordes decorativos"""
+    print(f"{AZUL}{NEGRITA}╔══════════════════════════════════════════════╗")
+    print(f"║         🌍  {BLANCO}GESTIÓN DE PAÍSES{AZUL}  🌍           ║")
+    print(f"╠══════════════════════════════════════════════╣")
+    print(f"║  {AMARILLO}[1]{AZUL}  Agregar país                           ║")
+    print(f"║  {AMARILLO}[2]{AZUL}  Actualizar datos de un país            ║")
+    print(f"║  {AMARILLO}[3]{AZUL}  Buscar país por nombre                 ║")
+    print(f"║  {AMARILLO}[4]{AZUL}  Filtrar países                         ║")
+    print(f"║  {AMARILLO}[5]{AZUL}  Ordenar países                         ║")
+    print(f"║  {AMARILLO}[6]{AZUL}  Ver estadísticas                       ║")
+    print(f"║  {AMARILLO}[7]{AZUL}  Mostrar todos los países               ║")
+    print(f"║  {AMARILLO}[0]{AZUL}  Salir                                  ║")
+    print(f"╚══════════════════════════════════════════════╝{RESET}")
