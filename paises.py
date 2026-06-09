@@ -386,7 +386,50 @@ def ordenar_paises(paises):
 
 
 def mostrar_estadisticas(paises):
-    pass
+    """Calcula y muestra estadísticas básicas de los países cargados"""
+    if not paises:
+        imprimir_cuadro_advertencia("No hay datos para generar estadísticas.")
+        return
+
+    imprimir_titulo("ESTADÍSTICAS GENERALES")
+
+    p_mayor_pob = paises[0]
+    p_menor_pob = paises[0]
+    suma_pob = 0
+    suma_sup = 0
+    conteo_continentes = {}
+
+    for p in paises:
+        if p["poblacion"] > p_mayor_pob["poblacion"]:
+            p_mayor_pob = p
+        if p["poblacion"] < p_menor_pob["poblacion"]:
+            p_menor_pob = p
+
+        suma_pob += p["poblacion"]
+        suma_sup += p["superficie"]
+
+        cont = p["continente"]
+        if cont in conteo_continentes:
+            conteo_continentes[cont] += 1
+        else:
+            conteo_continentes[cont] = 1
+
+    prom_pob = suma_pob / len(paises)
+    prom_sup = suma_sup / len(paises)
+
+    print(f"\n{NEGRITA}📊 RESUMEN NUMÉRICO:{RESET}")
+    print(
+        f"{CIAN}• País con más población: {RESET}{p_mayor_pob['nombre']} ({p_mayor_pob['poblacion']:,} hab.)"
+    )
+    print(
+        f"{CIAN}• País con menos población: {RESET}{p_menor_pob['nombre']} ({p_menor_pob['poblacion']:,} hab.)"
+    )
+    print(f"{CIAN}• Promedio de población: {RESET}{prom_pob:,.2f} hab.")
+    print(f"{CIAN}• Promedio de superficie: {RESET}{prom_sup:,.2f} km²")
+
+    print(f"\n{NEGRITA}🌍 PAÍSES POR CONTINENTE:{RESET}")
+    for cont, cant in conteo_continentes.items():
+        print(f" - {cont:<15}: {cant} países")
 
 
 def main():
