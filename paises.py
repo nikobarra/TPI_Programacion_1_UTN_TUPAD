@@ -331,7 +331,58 @@ def filtrar_paises(paises):
 
 
 def ordenar_paises(paises):
-    pass
+    """Ordena una copia de la lista mediante el algoritmo Bubble Sort (Método burbuja)"""
+    if not paises:
+        imprimir_cuadro_advertencia("No hay países para ordenar.")
+        return
+
+    copia = []
+    for p in paises:
+        copia.append(p.copy())
+
+    imprimir_titulo("ORDENAR PAÍSES")
+    print("1. Por nombre (A-Z)")
+    print("2. Por población (Mayor a Menor)")
+    print("3. Por superficie (Elegir Ascendente/Descendente)")
+
+    opcion = input(f"\n{AMARILLO}Seleccione criterio: {RESET}")
+
+    sentido = "2"
+    if opcion == "3":
+        print("\nSentido del ordenamiento:")
+        print("1. Menor a Mayor (Ascendente)")
+        print("2. Mayor a Menor (Descendente)")
+        sentido = input(f"{AMARILLO}Seleccione sentido: {RESET}")
+
+    n = len(copia)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            intercambiar = False
+
+            if opcion == "1":
+                if copia[j]["nombre"] > copia[j + 1]["nombre"]:
+                    intercambiar = True
+            elif opcion == "2":
+                if copia[j]["poblacion"] < copia[j + 1]["poblacion"]:
+                    intercambiar = True
+            elif opcion == "3":
+                if sentido == "1":
+                    if copia[j]["superficie"] > copia[j + 1]["superficie"]:
+                        intercambiar = True
+                else:
+                    if copia[j]["superficie"] < copia[j + 1]["superficie"]:
+                        intercambiar = True
+
+            if intercambiar:
+                copia[j], copia[j + 1] = copia[j + 1], copia[j]
+
+    if opcion in ["1", "2", "3"]:
+        imprimir_cuadro_info(
+            "Lista ordenada (estos cambios no afectan la base de datos principal)"
+        )
+        mostrar_todos(copia)
+    else:
+        imprimir_cuadro_advertencia("Opción de ordenado no válida.")
 
 
 def mostrar_estadisticas(paises):
