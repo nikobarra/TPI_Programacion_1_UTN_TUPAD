@@ -1,151 +1,13 @@
-import os
-import csv
-import sys
-
-# Constantes de colores ANSI para la interfaz
-ROJO = "\033[91m"
-VERDE = "\033[92m"
-AMARILLO = "\033[93m"
-AZUL = "\033[94m"
-MAGENTA = "\033[95m"
-CIAN = "\033[96m"
-BLANCO = "\033[97m"
-NEGRITA = "\033[1m"
-RESET = "\033[0m"
-
-
-def limpiar_pantalla():
-    """Limpia la consola según el sistema operativo"""
-    os.system("cls" if os.name == "nt" else "clear")
-
-
-def imprimir_cuadro_error(mensaje):
-    """Muestra un mensaje de error en un cuadro rojo"""
-    linea = "═" * (len(mensaje) + 6)
-    print(f"\n{ROJO}╔{linea}╗")
-    print(f"║   ❌ {mensaje}   ║")
-    print(f"╚{linea}╝{RESET}")
-
-
-def imprimir_cuadro_exito(mensaje):
-    """Muestra un mensaje de éxito en un cuadro verde"""
-    linea = "═" * (len(mensaje) + 6)
-    print(f"\n{VERDE}╔{linea}╗")
-    print(f"║   ✓  {mensaje}   ║")
-    print(f"╚{linea}╝{RESET}")
-
-
-def imprimir_cuadro_info(mensaje):
-    """Muestra un mensaje informativo en un cuadro cian"""
-    linea = "═" * (len(mensaje) + 6)
-    print(f"\n{CIAN}╔{linea}╗")
-    print(f"║   ℹ  {mensaje}   ║")
-    print(f"╚{linea}╝{RESET}")
-
-
-def imprimir_cuadro_advertencia(mensaje):
-    """Muestra un mensaje de advertencia en un cuadro amarillo"""
-    linea = "═" * (len(mensaje) + 6)
-    print(f"\n{AMARILLO}╔{linea}╗")
-    print(f"║   ⚠  {mensaje}   ║")
-    print(f"╚{linea}╝{RESET}")
-
-
-def imprimir_titulo(texto):
-    """Muestra un título decorado en magenta"""
-    print(f"\n{MAGENTA}{NEGRITA}{'═' * 50}")
-    print(f"{texto.center(50)}")
-    print(f"{'═' * 50}{RESET}")
-
-
-def imprimir_menu():
-    """Muestra el menú principal con bordes decorativos"""
-    print(f"{AZUL}{NEGRITA}╔══════════════════════════════════════════════╗")
-    print(f"║         🌍  {BLANCO}GESTIÓN DE PAÍSES{AZUL}  🌍           ║")
-    print(f"╠══════════════════════════════════════════════╣")
-    print(f"║  {AMARILLO}[1]{AZUL}  Agregar país                           ║")
-    print(f"║  {AMARILLO}[2]{AZUL}  Actualizar datos de un país            ║")
-    print(f"║  {AMARILLO}[3]{AZUL}  Buscar país por nombre                 ║")
-    print(f"║  {AMARILLO}[4]{AZUL}  Filtrar países                         ║")
-    print(f"║  {AMARILLO}[5]{AZUL}  Ordenar países                         ║")
-    print(f"║  {AMARILLO}[6]{AZUL}  Ver estadísticas                       ║")
-    print(f"║  {AMARILLO}[7]{AZUL}  Mostrar todos los países               ║")
-    print(f"║  {AMARILLO}[0]{AZUL}  Salir                                  ║")
-    print(f"╚══════════════════════════════════════════════╝{RESET}")
-
-
-def cargar_csv(nombre_archivo):
-    """Carga los datos del CSV a una lista de diccionarios"""
-    lista_paises = []
-    if not os.path.exists(nombre_archivo):
-        imprimir_cuadro_advertencia(
-            f"El archivo {nombre_archivo} no existe. Iniciando lista vacía."
-        )
-        return lista_paises
-
-    try:
-        with open(nombre_archivo, mode="r", encoding="utf-8") as f:
-            lector = csv.DictReader(f)
-            for fila in lector:
-                try:
-                    # Validamos que los datos numéricos sean correctos
-                    pais = {
-                        "nombre": fila["nombre"].strip().title(),
-                        "poblacion": int(fila["poblacion"]),
-                        "superficie": int(fila["superficie"]),
-                        "continente": fila["continente"].strip().title(),
-                    }
-                    if pais["poblacion"] > 0 and pais["superficie"] > 0:
-                        lista_paises.append(pais)
-                except (ValueError, KeyError):
-                    continue  # Si hay error en una fila, la salteamos
-
-        if lista_paises:
-            imprimir_cuadro_exito(
-                f"Se cargaron {len(lista_paises)} países correctamente."
-            )
-        else:
-            imprimir_cuadro_advertencia(
-                "El archivo CSV estaba vacío o no tenía datos válidos."
-            )
-    except Exception as e:
-        imprimir_cuadro_error(f"Error al leer el archivo: {e}")
-
-    return lista_paises
-
-
-def guardar_csv(nombre_archivo, lista_paises):
-    """Guarda la lista de países completa en el archivo CSV"""
-    try:
-        with open(nombre_archivo, mode="w", encoding="utf-8", newline="") as f:
-            campos = ["nombre", "poblacion", "superficie", "continente"]
-            escritor = csv.DictWriter(f, fieldnames=campos)
-            escritor.writeheader()
-            for pais in lista_paises:
-                escritor.writerow(pais)
-        return True
-    except Exception as e:
-        imprimir_cuadro_error(f"No se pudo guardar en el archivo: {e}")
-        return False
-
-
-def mostrar_todos(paises):
-    """Muestra todos los países en una tabla formateada"""
-    if not paises:
-        imprimir_cuadro_advertencia("No hay países para mostrar.")
-        return
-
-    # Encabezado de la tabla
-    header = f"{NEGRITA}{AZUL}{'NOMBRE':<20} {'POBLACIÓN':<15} {'SUPERFICIE (km2)':<20} {'CONTINENTE':<15}{RESET}"
-    print("\n" + header)
-    print("─" * 70)
-
-    for p in paises:
-        print(
-            f"{p['nombre']:<20} {p['poblacion']:<15,} {p['superficie']:<20,} {p['continente']:<15}"
-        )
-    print("─" * 70)
-
+from config import *
+from ui import (
+    imprimir_titulo, 
+    imprimir_cuadro_error, 
+    imprimir_cuadro_exito, 
+    imprimir_cuadro_info, 
+    imprimir_cuadro_advertencia, 
+    mostrar_tabla_paises
+)
+from archivos import guardar_csv
 
 def agregar_pais(paises):
     """Permite al usuario ingresar un nuevo país con validaciones"""
@@ -197,7 +59,6 @@ def agregar_pais(paises):
             "El país se agregó en memoria pero hubo un error al guardar el archivo."
         )
 
-
 def actualizar_pais(paises):
     """Busca un país por nombre y permite editar población y superficie"""
     if not paises:
@@ -245,7 +106,6 @@ def actualizar_pais(paises):
     else:
         imprimir_cuadro_error("País no encontrado.")
 
-
 def buscar_pais(paises):
     """Busca países que contengan el texto ingresado"""
     if not paises:
@@ -264,10 +124,9 @@ def buscar_pais(paises):
 
     if resultados:
         imprimir_cuadro_info(f"Se encontraron {len(resultados)} coincidencias:")
-        mostrar_todos(resultados)
+        mostrar_tabla_paises(resultados)
     else:
         imprimir_cuadro_advertencia("No se encontraron países con ese nombre.")
-
 
 def filtrar_paises(paises):
     """Submenú para aplicar distintos filtros a la lista"""
@@ -325,10 +184,9 @@ def filtrar_paises(paises):
         return
 
     if resultados:
-        mostrar_todos(resultados)
+        mostrar_tabla_paises(resultados)
     else:
         imprimir_cuadro_advertencia("Ningún país coincide con el filtro.")
-
 
 def ordenar_paises(paises):
     """Ordena una copia de la lista mediante el algoritmo Bubble Sort (Método burbuja)"""
@@ -380,10 +238,9 @@ def ordenar_paises(paises):
         imprimir_cuadro_info(
             "Lista ordenada (estos cambios no afectan la base de datos principal)"
         )
-        mostrar_todos(copia)
+        mostrar_tabla_paises(copia)
     else:
         imprimir_cuadro_advertencia("Opción de ordenado no válida.")
-
 
 def mostrar_estadisticas(paises):
     """Calcula y muestra estadísticas básicas de los países cargados"""
@@ -430,48 +287,3 @@ def mostrar_estadisticas(paises):
     print(f"\n{NEGRITA}🌍 PAÍSES POR CONTINENTE:{RESET}")
     for cont, cant in conteo_continentes.items():
         print(f" - {cont:<15}: {cant} países")
-
-
-def main():
-    limpiar_pantalla()
-    imprimir_titulo("BIENVENIDO AL SISTEMA DE GESTIÓN MUNDIAL")
-
-    lista_paises = cargar_csv("paises.csv")
-
-    if not lista_paises:
-        input(
-            f"\n{AMARILLO}Presione Enter para continuar con el programa vacío...{RESET}"
-        )
-
-    while True:
-        limpiar_pantalla()
-        imprimir_menu()
-
-        opcion = input(f"\n{AMARILLO}Seleccione una opción (0-7): {RESET}")
-
-        if opcion == "1":
-            agregar_pais(lista_paises)
-        elif opcion == "2":
-            actualizar_pais(lista_paises)
-        elif opcion == "3":
-            buscar_pais(lista_paises)
-        elif opcion == "4":
-            filtrar_paises(lista_paises)
-        elif opcion == "5":
-            ordenar_paises(lista_paises)
-        elif opcion == "6":
-            mostrar_estadisticas(lista_paises)
-        elif opcion == "7":
-            imprimir_titulo("LISTADO COMPLETO DE PAÍSES")
-            mostrar_todos(lista_paises)
-        elif opcion == "0":
-            imprimir_cuadro_info("Gracias por utilizar el sistema. ¡Hasta pronto!")
-            sys.exit()
-        else:
-            imprimir_cuadro_advertencia("Opción no válida. Intente nuevamente.")
-
-        input(f"\n{BLANCO}Presione Enter para volver al menú...{RESET}")
-
-
-if __name__ == "__main__":
-    main()
